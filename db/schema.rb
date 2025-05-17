@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_17_010724) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_17_083029) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -49,7 +49,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_17_010724) do
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "perfil_id"
     t.index ["local_id"], name: "index_anuncios_on_local_id"
+    t.index ["perfil_id"], name: "index_anuncios_on_perfil_id"
     t.index ["user_id"], name: "index_anuncios_on_user_id"
   end
 
@@ -90,6 +92,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_17_010724) do
     t.float "saldo"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "local_id"
+    t.index ["local_id"], name: "index_users_on_local_id"
   end
 
   create_table "users_perfils", force: :cascade do |t|
@@ -102,6 +106,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_17_010724) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "anuncios", "locals"
+  add_foreign_key "anuncios", "perfils"
   add_foreign_key "anuncios", "users"
   add_foreign_key "locals", "coordenadas"
+  add_foreign_key "users", "locals"
 end

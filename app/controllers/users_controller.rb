@@ -51,6 +51,27 @@ class UsersController < ApplicationController
     end
   end
 
+  def dentro_do_raio?(lat1, lon1, lat2, lon2, raio_km = 2)
+  raio_da_terra_km = 6371.0
+
+  dlat = to_radian(lat2 - lat1)
+  dlon = to_radian(lon2 - lon1)
+
+  a = Math.sin(dlat / 2)**2 +
+      Math.cos(to_radian(lat1)) * Math.cos(to_radian(lat2)) *
+      Math.sin(dlon / 2)**2
+
+  c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  distancia = raio_da_terra_km * c
+
+  distancia <= raio_km
+end
+
+def to_radian(degree)
+  degree * Math::PI / 180
+end
+
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user

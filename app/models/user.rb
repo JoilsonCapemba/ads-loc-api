@@ -1,6 +1,7 @@
 class User < ApplicationRecord
   has_secure_password
   has_and_belongs_to_many :perfils
+  belongs_to :local
   has_one_attached :avatar
 
   # callback para definir o saldo inicial do usuario assim que criamos o user
