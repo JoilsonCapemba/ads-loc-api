@@ -1,4 +1,5 @@
 class CoordenadasController < ApplicationController
+  before_action :authorize
   before_action :set_coordenada, only: %i[ show update destroy ]
 
   # GET /coordenadas

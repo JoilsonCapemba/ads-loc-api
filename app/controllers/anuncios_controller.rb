@@ -1,4 +1,5 @@
 class AnunciosController < ApplicationController
+  before_action :authorize
   before_action :set_anuncio, only: %i[ show update destroy ]
 
   # GET /anuncios

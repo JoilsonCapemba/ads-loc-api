@@ -1,4 +1,5 @@
 class LocalsController < ApplicationController
+  before_action :authorize
   before_action :set_local, only: %i[ show update destroy ]
 
   # GET /locals
