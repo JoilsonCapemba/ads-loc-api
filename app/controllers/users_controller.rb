@@ -17,8 +17,10 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
 
+
     if @user.save
-      render json: @user, status: :created, location: @user
+      token = encode_token({ user_id: @user.id })
+      render json: { user: @user, token: token }, status: :created, location: @user
     else
       render json: @user.errors, status: :unprocessable_entity
     end
@@ -38,14 +40,24 @@ class UsersController < ApplicationController
     @user.destroy!
   end
 
+  def login
+    @user = User.find_by(email: user_params[:email])
+    if @user.authenticate(user_params[:password])
+      token = encode_token({ user_id: @user.id })
+      render json: { user: @user, token: token }, status: :ok
+    else
+      render json: { error: "Usuario ou password invalida" }, status: :unprocessable_entity
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
       @user = User.find(params.expect(:id))
     end
 
-    # Only allow a list of trusted parameters through.
-    def user_params
-      params.expect(user: [ :email, :password, :username, :full_name, :saldo, :avatar ])
-    end
+  # Only allow a list of trusted parameters through.
+  def user_params
+    params.require(:user).permit(:email, :password, :username, :full_name, :saldo, :avatar)
+  end
 end

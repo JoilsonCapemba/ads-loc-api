@@ -23,10 +23,10 @@ namespace :dev do
     puts "Vinculando perfis a usuarios"
 
 
-    User.all.each do |user|
-      Random.rand(5).times do |i|
-        user.perfils << Perfil.find(Random.rand(5))
-      end
-    end
+    # User.all.each do |user|
+    #  Random.rand(5).times do |i|
+    #    user.perfils << Perfil.find(Random.rand(5))
+    #  end
+    # end
   end
 end
