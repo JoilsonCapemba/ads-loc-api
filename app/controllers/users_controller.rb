@@ -5,7 +5,6 @@ class UsersController < ApplicationController
   # GET /users
   def index
     @users = User.all
-
     render json: @users
   end
 
@@ -17,13 +16,18 @@ class UsersController < ApplicationController
   # POST /users
   def create
     @user = User.new(user_params)
-
-
+    
     if @user.save
       token = encode_token({ user_id: @user.id })
-      render json: { user: @user, token: token }, status: :created, location: @user
+      render json: { 
+        user: @user.as_json(except: [:password_digest]), 
+        token: token 
+      }, status: :created
     else
-      render json: @user.errors, status: :unprocessable_entity
+      render json: { 
+        error: "Erro ao criar usuário",
+        details: @user.errors.full_messages 
+      }, status: :unprocessable_entity
     end
   end
 
@@ -32,7 +36,10 @@ class UsersController < ApplicationController
     if @user.update(user_params)
       render json: @user
     else
-      render json: @user.errors, status: :unprocessable_entity
+      render json: { 
+        error: "Erro ao atualizar usuário",
+        details: @user.errors.full_messages 
+      }, status: :unprocessable_entity
     end
   end
 
@@ -42,12 +49,18 @@ class UsersController < ApplicationController
   end
 
   def login
-    @user = User.find_by(email: user_params[:email])
-    if @user.authenticate(user_params[:password])
+    @user = User.find_by(username: params[:user][:username])
+    
+    if @user&.authenticate(params[:user][:password])
       token = encode_token({ user_id: @user.id })
-      render json: { user: @user, token: token }, status: :ok
+      render json: { 
+        user: @user.as_json(except: [:password_digest]), 
+        token: token 
+      }, status: :ok
     else
-      render json: { error: "Usuario ou password invalida" }, status: :unprocessable_entity
+      render json: { 
+        error: "Usuário ou senha inválidos" 
+      }, status: :unprocessable_entity
     end
   end
 
@@ -71,15 +84,14 @@ def to_radian(degree)
   degree * Math::PI / 180
 end
 
-
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_user
-      @user = User.find(params.expect(:id))
+      @user = User.find(params[:id])
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: "Usuário não encontrado" }, status: :not_found
     end
 
-  # Only allow a list of trusted parameters through.
-  def user_params
-    params.require(:user).permit(:email, :password, :username, :full_name, :saldo, :avatar)
-  end
+    def user_params
+      params.require(:user).permit(:email, :password, :username, :full_name, :saldo, :avatar)
+    end
 end
