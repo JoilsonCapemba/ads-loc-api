@@ -11,7 +11,7 @@ class ApplicationController < ActionController::API
       begin
         JWT.decode(token, "secret", true, algorithm: "HS256")
       rescue JWT::DecodeError
-        nill
+        nil
       end
     end
   end

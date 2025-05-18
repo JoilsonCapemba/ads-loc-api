@@ -13,6 +13,11 @@ class UsersController < ApplicationController
     render json: @user
   end
 
+  # GET /users/profile
+  def profile
+    render json: @user.as_json(except: [:password_digest])
+  end
+
   # POST /users
   def create
     @user = User.new(user_params)
@@ -65,24 +70,24 @@ class UsersController < ApplicationController
   end
 
   def dentro_do_raio?(lat1, lon1, lat2, lon2, raio_km = 2)
-  raio_da_terra_km = 6371.0
+    raio_da_terra_km = 6371.0
 
-  dlat = to_radian(lat2 - lat1)
-  dlon = to_radian(lon2 - lon1)
+    dlat = to_radian(lat2 - lat1)
+    dlon = to_radian(lon2 - lon1)
 
-  a = Math.sin(dlat / 2)**2 +
-      Math.cos(to_radian(lat1)) * Math.cos(to_radian(lat2)) *
-      Math.sin(dlon / 2)**2
+    a = Math.sin(dlat / 2)**2 +
+        Math.cos(to_radian(lat1)) * Math.cos(to_radian(lat2)) *
+        Math.sin(dlon / 2)**2
 
-  c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-  distancia = raio_da_terra_km * c
+    c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+    distancia = raio_da_terra_km * c
 
-  distancia <= raio_km
-end
+    distancia <= raio_km
+  end
 
-def to_radian(degree)
-  degree * Math::PI / 180
-end
+  def to_radian(degree)
+    degree * Math::PI / 180
+  end
 
   private
     def set_user
