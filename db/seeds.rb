@@ -7,3 +7,28 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+
+# Criando perfis padrão
+perfis = [
+  "Desenvolvedor",
+  "Designer",
+  "Marketing",
+  "Vendedor",
+  "Freelancer",
+  "Estudante",
+  "Professor",
+  "Consultor",
+  "Empreendedor",
+  "Iniciante",
+  "Intermediário",
+  "Avançado",
+  "Remoto",
+  "Presencial",
+  "Híbrido"
+]
+
+puts "Criando perfis..."
+perfis.each do |descricao|
+  Perfil.find_or_create_by!(descricao: descricao)
+end
+puts "Perfis criados com sucesso!"
