@@ -22,9 +22,15 @@ class ApplicationController < ActionController::API
       user_id = decoded_token[0]["user_id"]
       @user = User.find_by(id: user_id)
     end
+    @user.present?
   end
 
   def authorize
-    render json: { message: "Voce precisa estar logado" }, status: :unauthorized unless authorized_user
+    unless authorized_user
+      render json: { 
+        error: "Não autorizado",
+        message: "Você precisa estar logado" 
+      }, status: :unauthorized
+    end
   end
 end

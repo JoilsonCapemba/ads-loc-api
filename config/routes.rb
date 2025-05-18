@@ -1,12 +1,16 @@
 Rails.application.routes.draw do
+  # Rotas de autenticação e perfil
+  post "/login", to: "users#login"
+  get "/users/profile", to: "users#profile"
+  put "/users/profile", to: "users#update_profile"
+  
+  # Recursos REST
   resources :perfils
   resources :anuncios
   resources :locals
   resources :coordenadas
   resources :users
 
-  post "/login", to: "users#login"
-  get "/users/profile", to: "users#profile"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

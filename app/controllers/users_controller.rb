@@ -15,7 +15,35 @@ class UsersController < ApplicationController
 
   # GET /users/profile
   def profile
-    render json: @user.as_json(except: [:password_digest])
+    if @user
+      render json: {
+        id: @user.id,
+        fullName: @user.full_name,
+        username: @user.username,
+        email: @user.email,
+        saldo: @user.saldo
+      }
+    else
+      render json: { error: "Usuário não encontrado" }, status: :not_found
+    end
+  end
+
+  # PUT /users/profile
+  def update_profile
+    if @user&.update(full_name: params[:fullName], username: params[:username], email: params[:email])
+      render json: {
+        id: @user.id,
+        fullName: @user.full_name,
+        username: @user.username,
+        email: @user.email,
+        saldo: @user.saldo
+      }
+    else
+      render json: { 
+        error: "Erro ao atualizar usuário",
+        details: @user&.errors&.full_messages || ["Usuário não encontrado"]
+      }, status: :unprocessable_entity
+    end
   end
 
   # POST /users
