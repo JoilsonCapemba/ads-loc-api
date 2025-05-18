@@ -4,8 +4,7 @@ class PerfilsController < ApplicationController
 
   # GET /perfils
   def index
-    @perfils = Perfil.all
-
+    @perfils = Perfil.all.order(:descricao)
     render json: @perfils
   end
 
@@ -19,9 +18,12 @@ class PerfilsController < ApplicationController
     @perfil = Perfil.new(perfil_params)
 
     if @perfil.save
-      render json: @perfil, status: :created, location: @perfil
+      render json: @perfil, status: :created
     else
-      render json: @perfil.errors, status: :unprocessable_entity
+      render json: { 
+        error: "Erro ao criar perfil",
+        details: @perfil.errors.full_messages 
+      }, status: :unprocessable_entity
     end
   end
 
@@ -30,23 +32,33 @@ class PerfilsController < ApplicationController
     if @perfil.update(perfil_params)
       render json: @perfil
     else
-      render json: @perfil.errors, status: :unprocessable_entity
+      render json: { 
+        error: "Erro ao atualizar perfil",
+        details: @perfil.errors.full_messages 
+      }, status: :unprocessable_entity
     end
   end
 
   # DELETE /perfils/1
   def destroy
-    @perfil.destroy!
+    if @perfil.users.any?
+      render json: { 
+        error: "Não é possível excluir um perfil que está sendo usado por usuários" 
+      }, status: :unprocessable_entity
+    else
+      @perfil.destroy!
+      head :no_content
+    end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_perfil
-      @perfil = Perfil.find(params.expect(:id))
+      @perfil = Perfil.find(params[:id])
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: "Perfil não encontrado" }, status: :not_found
     end
 
-    # Only allow a list of trusted parameters through.
     def perfil_params
-      params.expect(perfil: [ :descricao ])
+      params.require(:perfil).permit(:descricao)
     end
 end
