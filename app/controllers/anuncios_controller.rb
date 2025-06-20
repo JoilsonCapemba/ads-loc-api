@@ -4,7 +4,11 @@ class AnunciosController < ApplicationController
 
   # GET /anuncios
   def index
-    @anuncios = Anuncio.all
+    if params[:user_id]
+      @anuncios = Anuncio.where(user_id: params[:user_id])
+    else
+      @anuncios = Anuncio.all
+    end
 
     render json: @anuncios
   end
