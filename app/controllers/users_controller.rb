@@ -21,7 +21,8 @@ class UsersController < ApplicationController
         fullName: @user.full_name,
         username: @user.username,
         email: @user.email,
-        saldo: @user.saldo
+        saldo: @user.saldo,
+        perfis: @user.perfils
       }
     else
       render json: { error: "Usuário não encontrado" }, status: :not_found
@@ -30,19 +31,30 @@ class UsersController < ApplicationController
 
   # PUT /users/profile
   def update_profile
-    if @user&.update(full_name: params[:fullName], username: params[:username], email: params[:email])
-      render json: {
-        id: @user.id,
-        fullName: @user.full_name,
-        username: @user.username,
-        email: @user.email,
-        saldo: @user.saldo
-      }
+    if @user
+      @user.full_name = params[:fullName] if params[:fullName]
+      @user.username = params[:username] if params[:username]
+      @user.email = params[:email] if params[:email]
+      if params[:perfis]
+        @user.perfils = Perfil.where(id: params[:perfis])
+      end
+      if @user.save
+        render json: {
+          id: @user.id,
+          fullName: @user.full_name,
+          username: @user.username,
+          email: @user.email,
+          saldo: @user.saldo,
+          perfis: @user.perfils
+        }
+      else
+        render json: { 
+          error: "Erro ao atualizar usuário",
+          details: @user.errors.full_messages
+        }, status: :unprocessable_entity
+      end
     else
-      render json: { 
-        error: "Erro ao atualizar usuário",
-        details: @user&.errors&.full_messages || ["Usuário não encontrado"]
-      }, status: :unprocessable_entity
+      render json: { error: "Usuário não encontrado" }, status: :not_found
     end
   end
 
