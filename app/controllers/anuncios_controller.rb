@@ -47,6 +47,6 @@ class AnunciosController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def anuncio_params
-      params.expect(anuncio: [ :titulo, :descricao, :local_id, :user_id, :fotos ])
+      params.require(:anuncio).permit(:titulo, :descricao, :local_id, :user_id, :fotos, :tag_descricao)
     end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_17_083029) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_20_173216) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -50,6 +50,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_17_083029) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "perfil_id"
+    t.string "tag_descricao"
     t.index ["local_id"], name: "index_anuncios_on_local_id"
     t.index ["perfil_id"], name: "index_anuncios_on_perfil_id"
     t.index ["user_id"], name: "index_anuncios_on_user_id"
