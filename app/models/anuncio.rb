@@ -13,7 +13,17 @@ class Anuncio < ApplicationRecord
 
   def fotos_url
     if fotos.attached?
-      Rails.application.routes.url_helpers.url_for(fotos.first)
+      begin
+        # Tentar gerar URL completa
+        Rails.application.routes.url_helpers.url_for(fotos.first)
+      rescue ArgumentError => e
+        # Se falhar por falta de host, retornar URL relativa
+        if e.message.include?("Missing host")
+          Rails.application.routes.url_helpers.rails_blob_path(fotos.first, only_path: true)
+        else
+          raise e
+        end
+      end
     else
       nil
     end

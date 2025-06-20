@@ -54,7 +54,7 @@ class AnunciosController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_anuncio
-      @anuncio = Anuncio.find(params.expect(:id))
+      @anuncio = Anuncio.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
