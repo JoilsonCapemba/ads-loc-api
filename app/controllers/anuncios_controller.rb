@@ -10,7 +10,7 @@ class AnunciosController < ApplicationController
       @anuncios = Anuncio.all
     end
 
-    render json: @anuncios
+    render json: @anuncios.as_json(methods: [:local_nome, :user_nome, :fotos_url])
   end
 
   # GET /anuncios/1
@@ -20,7 +20,15 @@ class AnunciosController < ApplicationController
 
   # POST /anuncios
   def create
-    @anuncio = Anuncio.new(anuncio_params)
+    @anuncio = Anuncio.new(anuncio_params.except(:fotos))
+    fotos_param = (params[:anuncio][:fotos] if params[:anuncio]) || params[:fotos]
+    if fotos_param.present?
+      if fotos_param.is_a?(Array)
+        fotos_param.each { |foto| @anuncio.fotos.attach(foto) }
+      else
+        @anuncio.fotos.attach(fotos_param)
+      end
+    end
 
     if @anuncio.save
       render json: @anuncio, status: :created, location: @anuncio
@@ -51,6 +59,6 @@ class AnunciosController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def anuncio_params
-      params.require(:anuncio).permit(:titulo, :descricao, :local_id, :user_id, :fotos, :tag_descricao)
+      params.require(:anuncio).permit(:titulo, :descricao, :local_id, :user_id, :tag_descricao, fotos: [])
     end
 end
