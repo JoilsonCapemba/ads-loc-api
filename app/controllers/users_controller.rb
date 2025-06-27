@@ -22,6 +22,7 @@ class UsersController < ApplicationController
         username: @user.username,
         email: @user.email,
         saldo: @user.saldo,
+        photoUrl: @user.avatar_url,
         perfis: @user.perfils
       }
     else
@@ -45,6 +46,7 @@ class UsersController < ApplicationController
           username: @user.username,
           email: @user.email,
           saldo: @user.saldo,
+          photoUrl: @user.avatar_url,
           perfis: @user.perfils
         }
       else
@@ -65,7 +67,7 @@ class UsersController < ApplicationController
     if @user.save
       token = encode_token({ user_id: @user.id })
       render json: { 
-        user: @user.as_json(except: [:password_digest]), 
+        user: @user.as_json(except: [:password_digest]).merge(photoUrl: @user.avatar_url), 
         token: token 
       }, status: :created
     else
@@ -127,6 +129,31 @@ class UsersController < ApplicationController
 
   def to_radian(degree)
     degree * Math::PI / 180
+  end
+
+  # POST /users/profile/photo
+  def upload_photo
+    if @user && params[:photo]
+      @user.avatar.attach(params[:photo])
+      if @user.save
+        render json: {
+          id: @user.id,
+          fullName: @user.full_name,
+          username: @user.username,
+          email: @user.email,
+          saldo: @user.saldo,
+          photoUrl: @user.avatar_url,
+          perfis: @user.perfils
+        }
+      else
+        render json: { 
+          error: "Erro ao salvar foto",
+          details: @user.errors.full_messages 
+        }, status: :unprocessable_entity
+      end
+    else
+      render json: { error: "Foto não fornecida" }, status: :bad_request
+    end
   end
 
   private

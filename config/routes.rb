@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   post "/login", to: "users#login"
   get "/users/profile", to: "users#profile"
   put "/users/profile", to: "users#update_profile"
+  post "/users/profile/photo", to: "users#upload_photo"
   
   # Recursos REST
   resources :perfils

@@ -39,7 +39,7 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
 
   # Set default URL options for Active Storage
-  config.active_storage.default_url_options = { host: "localhost", port: 3000 }
+  config.active_storage.default_url_options = { host: "192.168.1.8", port: 3000 }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log

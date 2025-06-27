@@ -13,6 +13,24 @@ class User < ApplicationRecord
   # callback para definir o saldo inicial do usuario assim que criamos o user
   before_create :set_saldo_padrao
 
+  def avatar_url
+    if avatar.attached?
+      begin
+        # Gerar URL completa com o host configurado
+        Rails.application.routes.url_helpers.url_for(avatar)
+      rescue ArgumentError => e
+        # Se falhar, tentar com configuração explícita
+        if e.message.include?("Missing host")
+          Rails.application.routes.url_helpers.rails_blob_url(avatar, host: "192.168.1.8:3000")
+        else
+          raise e
+        end
+      end
+    else
+      nil
+    end
+  end
+
   private
 
   def set_saldo_padrao
