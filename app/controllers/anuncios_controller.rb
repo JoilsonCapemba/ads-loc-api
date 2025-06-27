@@ -15,7 +15,7 @@ class AnunciosController < ApplicationController
 
   # GET /anuncios/1
   def show
-    render json: @anuncio
+    render json: @anuncio.as_json(methods: [:local_nome, :user_nome, :fotos_url])
   end
 
   # POST /anuncios
@@ -39,8 +39,23 @@ class AnunciosController < ApplicationController
 
   # PATCH/PUT /anuncios/1
   def update
-    if @anuncio.update(anuncio_params)
-      render json: @anuncio
+    # Remover fotos antigas se uma nova foto for enviada
+    if params[:anuncio][:fotos].present?
+      @anuncio.fotos.purge
+    end
+    
+    if @anuncio.update(anuncio_params.except(:fotos))
+      # Anexar nova foto se fornecida
+      fotos_param = (params[:anuncio][:fotos] if params[:anuncio]) || params[:fotos]
+      if fotos_param.present?
+        if fotos_param.is_a?(Array)
+          fotos_param.each { |foto| @anuncio.fotos.attach(foto) }
+        else
+          @anuncio.fotos.attach(fotos_param)
+        end
+      end
+      
+      render json: @anuncio.as_json(methods: [:local_nome, :user_nome, :fotos_url])
     else
       render json: @anuncio.errors, status: :unprocessable_entity
     end
