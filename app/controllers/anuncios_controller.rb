@@ -10,12 +10,12 @@ class AnunciosController < ApplicationController
       @anuncios = Anuncio.all
     end
 
-    render json: @anuncios.as_json(methods: [:local_nome, :user_nome, :fotos_url])
+    render json: @anuncios.as_json(methods: [:local_nome, :user_nome, :fotos_url], include: {})
   end
 
   # GET /anuncios/1
   def show
-    render json: @anuncio.as_json(methods: [:local_nome, :user_nome, :fotos_url])
+    render json: @anuncio.as_json(methods: [:local_nome, :user_nome, :fotos_url], include: {})
   end
 
   # POST /anuncios
