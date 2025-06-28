@@ -5,6 +5,19 @@ Rails.application.routes.draw do
   put "/users/profile", to: "users#update_profile"
   post "/users/profile/photo", to: "users#upload_photo"
   
+  # Rotas do sistema de chat
+  resources :chats, only: [:index, :show, :create] do
+    resources :messages, only: [:index, :create]
+  end
+  
+  resources :messages, only: [:show] do
+    member do
+      patch :mark_as_read
+    end
+  end
+  
+  get "/messages/unread_count", to: "messages#unread_count"
+  
   # Recursos REST
   resources :perfils
   resources :anuncios

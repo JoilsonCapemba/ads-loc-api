@@ -20,9 +20,9 @@ class ApplicationController < ActionController::API
     decoded_token = decoded_token()
     if decoded_token
       user_id = decoded_token[0]["user_id"]
-      @user = User.find_by(id: user_id)
+      @current_user = User.find_by(id: user_id)
     end
-    @user.present?
+    @current_user.present?
   end
 
   def authorize

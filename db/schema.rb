@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_20_173216) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_27_232252) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -56,6 +56,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_20_173216) do
     t.index ["user_id"], name: "index_anuncios_on_user_id"
   end
 
+  create_table "chats", force: :cascade do |t|
+    t.bigint "user1_id", null: false
+    t.bigint "user2_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user1_id", "user2_id"], name: "index_chats_on_user1_id_and_user2_id", unique: true
+    t.index ["user1_id"], name: "index_chats_on_user1_id"
+    t.index ["user2_id"], name: "index_chats_on_user2_id"
+  end
+
   create_table "coordenadas", force: :cascade do |t|
     t.float "latitude"
     t.float "longitude"
@@ -70,6 +80,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_20_173216) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["coordenada_id"], name: "index_locals_on_coordenada_id"
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.bigint "chat_id", null: false
+    t.bigint "sender_id", null: false
+    t.text "content"
+    t.boolean "read", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["chat_id", "created_at"], name: "index_messages_on_chat_id_and_created_at"
+    t.index ["chat_id"], name: "index_messages_on_chat_id"
+    t.index ["sender_id", "read"], name: "index_messages_on_sender_id_and_read"
+    t.index ["sender_id"], name: "index_messages_on_sender_id"
   end
 
   create_table "perfils", force: :cascade do |t|
@@ -109,6 +132,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_20_173216) do
   add_foreign_key "anuncios", "locals"
   add_foreign_key "anuncios", "perfils"
   add_foreign_key "anuncios", "users"
+  add_foreign_key "chats", "users", column: "user1_id"
+  add_foreign_key "chats", "users", column: "user2_id"
   add_foreign_key "locals", "coordenadas"
+  add_foreign_key "messages", "chats"
+  add_foreign_key "messages", "users", column: "sender_id"
   add_foreign_key "users", "locals"
 end

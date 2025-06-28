@@ -15,15 +15,15 @@ class UsersController < ApplicationController
 
   # GET /users/profile
   def profile
-    if @user
+    if @current_user
       render json: {
-        id: @user.id,
-        fullName: @user.full_name,
-        username: @user.username,
-        email: @user.email,
-        saldo: @user.saldo,
-        photoUrl: @user.avatar_url,
-        perfis: @user.perfils
+        id: @current_user.id,
+        fullName: @current_user.full_name,
+        username: @current_user.username,
+        email: @current_user.email,
+        saldo: @current_user.saldo,
+        photoUrl: @current_user.avatar_url,
+        perfis: @current_user.perfils
       }
     else
       render json: { error: "Usuário não encontrado" }, status: :not_found
@@ -32,27 +32,27 @@ class UsersController < ApplicationController
 
   # PUT /users/profile
   def update_profile
-    if @user
-      @user.full_name = params[:fullName] if params[:fullName]
-      @user.username = params[:username] if params[:username]
-      @user.email = params[:email] if params[:email]
+    if @current_user
+      @current_user.full_name = params[:fullName] if params[:fullName]
+      @current_user.username = params[:username] if params[:username]
+      @current_user.email = params[:email] if params[:email]
       if params[:perfis]
-        @user.perfils = Perfil.where(id: params[:perfis])
+        @current_user.perfils = Perfil.where(id: params[:perfis])
       end
-      if @user.save
+      if @current_user.save
         render json: {
-          id: @user.id,
-          fullName: @user.full_name,
-          username: @user.username,
-          email: @user.email,
-          saldo: @user.saldo,
-          photoUrl: @user.avatar_url,
-          perfis: @user.perfils
+          id: @current_user.id,
+          fullName: @current_user.full_name,
+          username: @current_user.username,
+          email: @current_user.email,
+          saldo: @current_user.saldo,
+          photoUrl: @current_user.avatar_url,
+          perfis: @current_user.perfils
         }
       else
         render json: { 
           error: "Erro ao atualizar usuário",
-          details: @user.errors.full_messages
+          details: @current_user.errors.full_messages
         }, status: :unprocessable_entity
       end
     else
@@ -133,22 +133,22 @@ class UsersController < ApplicationController
 
   # POST /users/profile/photo
   def upload_photo
-    if @user && params[:photo]
-      @user.avatar.attach(params[:photo])
-      if @user.save
+    if @current_user && params[:photo]
+      @current_user.avatar.attach(params[:photo])
+      if @current_user.save
         render json: {
-          id: @user.id,
-          fullName: @user.full_name,
-          username: @user.username,
-          email: @user.email,
-          saldo: @user.saldo,
-          photoUrl: @user.avatar_url,
-          perfis: @user.perfils
+          id: @current_user.id,
+          fullName: @current_user.full_name,
+          username: @current_user.username,
+          email: @current_user.email,
+          saldo: @current_user.saldo,
+          photoUrl: @current_user.avatar_url,
+          perfis: @current_user.perfils
         }
       else
         render json: { 
           error: "Erro ao salvar foto",
-          details: @user.errors.full_messages 
+          details: @current_user.errors.full_messages 
         }, status: :unprocessable_entity
       end
     else
